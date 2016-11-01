@@ -9,7 +9,7 @@ A [BigBrotherBot][B3] plugin which allows you to see kicks, bans and temp bans i
 Download
 --------
 
-Latest version available [here]().
+Latest version available [here](https://github.com/efinst0rm/B3DiscordPlugin/archive/master.zip).
 
 Requirements
 ------------
