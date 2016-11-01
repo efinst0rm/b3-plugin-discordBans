@@ -19,11 +19,11 @@ In order for this plugin to work you need to have B3 *v1.10.11 * installed (or g
 Installation
 ------------
 
-* copy the `discord.py` folder into `b3/extplugins`
+* copy the `discordban.py` folder into `b3/extplugins`
 * add to the `plugins` section of your `b3.xml` config file:
 
   ```xml
-  <plugin name="discord" config="@b3/extplugins/conf/plugin_discord.xml" />
+  <plugin name="discordban" config="@b3/extplugins/conf/plugin_discordban.xml" />
   ```
 * you will need a discord web hook url [info](https://support.discordapp.com/hc/en-us/articles/228383668-Intro-to-Webhooks)
 
