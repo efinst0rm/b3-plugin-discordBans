@@ -25,7 +25,7 @@ Installation
   ```xml
   <plugin name="discord" config="@b3/extplugins/conf/plugin_discord.xml" />
   ```
-* you will need a discord web hook url
+* you will need a discord web hook url [info](https://support.discordapp.com/hc/en-us/articles/228383668-Intro-to-Webhooks)
 
 B3 events
 ---------
