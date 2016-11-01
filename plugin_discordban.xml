@@ -1,0 +1,6 @@
+<configuration plugin="discordban">
+  <settings name="authentication">
+    <set name="webhookUrl">DISCORD WEBHOOK HERE</set>
+	<set name="hostname">SERVERNAME</set>
+  </settings>
+</configuration>
