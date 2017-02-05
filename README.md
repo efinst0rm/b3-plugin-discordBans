@@ -30,7 +30,7 @@ Installation
 B3 events
 ---------
 
-The plugin make use of the folowing events to display notices in the dicord channel:
+The plugin makes use of the following events to display notices in the dicord channel:
 
 * `EVT_CLIENT_BAN` and `EVT_CLIENT_BAN_TEMP` : send a notice upon admin bans
 * `EVT_CLIENT_KICK` : send a notice upon admin kicks
