@@ -19,23 +19,19 @@
 #Credits 
 #Fenix the orginal author of the irc b3 bot which this plugin is based on.
 #Mordecaii from iG for his lovely discordPush fuction <3.
+#ItsDizzy from aD for the embedded message and some cleanups.
 
-__author__ = 'Fenix, st0rm, Mordecaii'
-__version__ = '1.0'
+__author__ = 'Fenix, st0rm, Mordecaii, ItsDizzy'
+__version__ = '1.1'
 
 import b3
 import b3.plugin
 import b3.events
-import urllib
-import re
-import datetime, time
+import datetime
 import urllib2
 import json
 
-from b3.functions import getCmd
 from b3.functions import minutesStr
-from ConfigParser import NoSectionError
-from threading import Thread
 
 
 class DiscordbanPlugin(b3.plugin.Plugin):
@@ -91,11 +87,28 @@ class DiscordbanPlugin(b3.plugin.Plugin):
         admin = event.data['admin']
         client = event.client
         reason = event.data['reason']
-        message = '[B3 BAN] Server: `%s` Admin: `%s` Banned `%s`' % (self._serverName, admin.name, client.name)
+
+        embed = {
+            "title": "B3 Ban",
+            "description": '**%s** Banned **%s**' % (admin.name, client.name),
+            "timestamp": datetime.datetime.now().isoformat(),
+            "color": 15466496,
+            "fields": [
+                {
+                    "name": "Server",
+                    "value": self._serverName,
+                    "inline": False
+                }
+            ]
+        }
 
         if reason:
             # if there is a reason attached to the ban, append it to the notice
-            message += ' Reason : `%s`' % (self.console.stripColors(reason))
+            embed["fields"].append({
+                "name": "Reason",
+                "value": self.console.stripColors(reason),
+                "inline": True
+            })
 
         duration = 'permanent'
         if 'duration' in event.data:
@@ -103,8 +116,9 @@ class DiscordbanPlugin(b3.plugin.Plugin):
             duration = minutesStr(event.data['duration'])
 
         # append the duration to the ban notice
-        message += ' [duration : `%s`]' % (duration)
-        self.discordPush(message)
+        embed["fields"].append({"name": "Duration", "value": duration, "inline": True})
+
+        self.discordEmbeddedPush(embed)
 
     def onKick(self, event):
         """
@@ -114,17 +128,52 @@ class DiscordbanPlugin(b3.plugin.Plugin):
         admin = event.data['admin']
         client = event.client
         reason = event.data['reason']
-        message = '[B3 KICK] Server: `%s` Admin: `%s` Kicked `%s`' % (self._serverName, admin.name, client.name)
+
+        embed = {
+            "title": "B3 Kick",
+            "description": '**%s** Kicked **%s**' % (admin.name, client.name),
+            "timestamp": datetime.datetime.now().isoformat(),
+            "color": 15466496,
+            "fields": [
+                {
+                    "name": "Server",
+                    "value": self._serverName,
+                    "inline": False
+                }
+            ]
+        }
 
         if reason:
-            message += ' Reason : `%s`' % (self.console.stripColors(reason))
-        self.discordPush(message)
+            # if there is a reason attached to the ban, append it to the notice
+            embed["fields"].append({
+                "name": "Reason",
+                "value": self.console.stripColors(reason),
+                "inline": True
+            })
+
+        self.discordEmbeddedPush(embed)
+
+    def discordEmbeddedPush(self, embed):
+        """
+        Send embedded message to discord bot huehue
+        """
+        data = json.dumps({"embeds": [embed]})
+        req = urllib2.Request(self._discordWebhookUrl, data, {
+            'Content-Type': 'application/json',
+            "User-Agent": "B3DiscordbanPlugin/1.1" #Is that a real User-Agent? Nope but who cares.
+        })
+
+        # Final magic happens here, we will never get an error ofcourse ;)
+        try:
+            urllib2.urlopen(req)
+        except urllib2.HTTPError as ex:
+            self.debug("Cannot push data to Discord. is your webhook url right?")
+            self.debug("Data: %s\nCode: %s\nRead: %s" % (data, ex.code, ex.read()))
 
     def discordPush(self, message):
         """
         Send message to discord bot yay.
         """
-	
         data = json.dumps({"content": message})
         req = urllib2.Request(self._discordWebhookUrl, data, {'Content-Type': 'application/json', "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.97 Safari/537.36"})
         try:
