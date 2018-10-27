@@ -21,8 +21,8 @@
 #Mordecaii from iG for his lovely discordPush fuction <3.
 #ItsDizzy from aD for the embedded message and some cleanups.
 
-__author__ = 'Fenix, st0rm, Mordecaii, ItsDizzy'
-__version__ = '1.1'
+__author__ = "Fenix, st0rm, Mordecaii, ItsDizzy"
+__version__ = "1.2"
 
 import b3
 import b3.plugin
@@ -49,16 +49,16 @@ class DiscordbanPlugin(b3.plugin.Plugin):
         :param config: The plugin configuration object instance.
         """
         b3.plugin.Plugin.__init__(self, console, config)
-        self.adminPlugin = self.console.getPlugin('admin')
+        self.adminPlugin = self.console.getPlugin("admin")
         if not self.adminPlugin:
-            raise AttributeError('could not start without admin plugin')
+            raise AttributeError("could not start without admin plugin")
 
     def onLoadConfig(self):
         """
         Load plugin configuration.
         """
-        self._discordWebhookUrl = self.config.get('authentication','webhookUrl')
-        self._serverName = self.config.get('authentication','hostname')
+        self._discordWebhookUrl = self.config.get("authentication","webhookUrl")
+        self._serverName = self.config.get("authentication","hostname")
 
     def onStartup(self):
         """
@@ -66,12 +66,12 @@ class DiscordbanPlugin(b3.plugin.Plugin):
         """
 
         # register necessary events
-        self.registerEvent(self.console.getEventID('EVT_CLIENT_BAN'), self.onBan)
-        self.registerEvent(self.console.getEventID('EVT_CLIENT_BAN_TEMP'), self.onBan)
-        self.registerEvent(self.console.getEventID('EVT_CLIENT_KICK'), self.onKick)
+        self.registerEvent(self.console.getEventID("EVT_CLIENT_BAN"), self.onBan)
+        self.registerEvent(self.console.getEventID("EVT_CLIENT_BAN_TEMP"), self.onBan)
+        self.registerEvent(self.console.getEventID("EVT_CLIENT_KICK"), self.onKick)
 
         # notice plugin started
-        self.debug('plugin started')
+        self.debug("plugin started")
 
     ####################################################################################################################
     #                                                                                                                  #
@@ -84,13 +84,19 @@ class DiscordbanPlugin(b3.plugin.Plugin):
         Perform operations when EVT_CLIENT_BAN or EVT_CLIENT_BAN_TEMP is received.
         :param event: An EVT_CLIENT_BAN or and EVT_CLIENT_BAN_TEMP event.
         """
-        admin = event.data['admin']
+        admin = event.data["admin"]
         client = event.client
-        reason = event.data['reason']
+        reason = event.data["reason"]
 
+        admin_name = ""
+        if admin == None:
+            admin_name = "B3"
+        else:
+            admin_name = admin.name
+            
         embed = {
             "title": "B3 Ban",
-            "description": '**%s** Banned **%s**' % (admin.name, client.name),
+            "description": "**%s** Banned **%s**" % (admin_name, client.name),
             "timestamp": datetime.datetime.now().isoformat(),
             "color": 15466496,
             "fields": [
@@ -125,13 +131,19 @@ class DiscordbanPlugin(b3.plugin.Plugin):
         Perform operations when EVT_CLIENT_KICK is received.
         :param event: An EVT_CLIENT_KICK event.
         """
-        admin = event.data['admin']
+        admin = event.data["admin"]
         client = event.client
-        reason = event.data['reason']
+        reason = event.data["reason"]
+		
+        admin_name = ""
+        if admin == None:
+            admin_name = "B3"
+        else:
+            admin_name = admin.name
 
         embed = {
             "title": "B3 Kick",
-            "description": '**%s** Kicked **%s**' % (admin.name, client.name),
+            "description": "**%s** Kicked **%s**" % (admin_name, client.name),
             "timestamp": datetime.datetime.now().isoformat(),
             "color": 15466496,
             "fields": [
@@ -159,7 +171,7 @@ class DiscordbanPlugin(b3.plugin.Plugin):
         """
         data = json.dumps({"embeds": [embed]})
         req = urllib2.Request(self._discordWebhookUrl, data, {
-            'Content-Type': 'application/json',
+            "'Content-Type": "application/json",
             "User-Agent": "B3DiscordbanPlugin/1.1" #Is that a real User-Agent? Nope but who cares.
         })
 
@@ -169,17 +181,3 @@ class DiscordbanPlugin(b3.plugin.Plugin):
         except urllib2.HTTPError as ex:
             self.debug("Cannot push data to Discord. is your webhook url right?")
             self.debug("Data: %s\nCode: %s\nRead: %s" % (data, ex.code, ex.read()))
-
-    def discordPush(self, message):
-        """
-        Send message to discord bot yay.
-        """
-        data = json.dumps({"content": message})
-        req = urllib2.Request(self._discordWebhookUrl, data, {'Content-Type': 'application/json', "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.97 Safari/537.36"})
-        try:
-            f = urllib2.urlopen(req)
-            response = f.read()
-            f.close()
-        except urllib2.HTTPError:
-            print "Cannot push data to Discord. is your webhook url right?"
-            pass
