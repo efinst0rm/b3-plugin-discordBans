@@ -171,7 +171,7 @@ class DiscordbanPlugin(b3.plugin.Plugin):
         """
         data = json.dumps({"embeds": [embed]})
         req = urllib2.Request(self._discordWebhookUrl, data, {
-            "'Content-Type": "application/json",
+            "Content-Type": "application/json",
             "User-Agent": "B3DiscordbanPlugin/1.1" #Is that a real User-Agent? Nope but who cares.
         })
 
