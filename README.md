@@ -34,10 +34,3 @@ The plugin makes use of the following events to display notices in the discord c
 
 * `EVT_CLIENT_BAN` and `EVT_CLIENT_BAN_TEMP` : send a notice upon admin bans
 * `EVT_CLIENT_KICK` : send a notice upon admin kicks
-
-Support
--------
-
-If you have found a bug, please report it on [Discord].
-
-[Discord]: https://discordapp.com/invite/AwPd37D
